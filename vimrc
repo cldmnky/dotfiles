@@ -19,6 +19,7 @@ au BufRead,BufNewFile *.pp set filetype=puppet
 set ai           " auto indend
 set si           " smart indent
 set ff=unix      " file format unix dammit
+set enc=utf-8
 set nocompatible " nocompatible mode
 set ruler        " ruler the bottom
 set expandtab     " expand tabs to spaces
@@ -41,6 +42,7 @@ set backupdir=~/.vim/backups
 set history=100         " keep 50 lines of command line history
 set hlsearch
 set listchars=tab:>-,trail:-
+set hidden
 
 if version >= 703
     set colorcolumn=80    " highlight the 80th column
@@ -121,6 +123,9 @@ let g:puppet_module_detect=1
 " Snippets still don't work the way I want - tab doesn't jump to next
 " placeholder.
 imap <expr><TAB> neocomplcache#sources#snippets_complete#expandable() ? "\<Plug>(neocomplcache_snippets_jump)" : pumvisible() ? "\<C-n>" : "\<TAB>"
+let g:snippets_dir="~/.vim/snippets/"
+let g:snips_author = 'Magnus Bengtsson'
+
 inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
 let g:neocomplcache_enable_auto_select = 1
 let g:neocomplcache_auto_completion_start_length = 1
