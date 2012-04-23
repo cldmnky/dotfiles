@@ -1,6 +1,6 @@
 " set colorscheme
 if &t_Co >= 256 || has('gui_running')
-    colorscheme ir_black
+    colorscheme vividchalk
 endif
 " Pathogen
 filetype off 
@@ -79,6 +79,7 @@ else
   set autoindent    " always set autoindenting on
 
 endif " has("autocmd")
+let mapleader = ","
 " ------------------------------------
 " Comment settings
 " ------------------------------------
@@ -120,8 +121,7 @@ let g:syntastic_auto_loc_list=2
 " enable puppet module detection
 let g:puppet_module_detect=1
 
-" Snippets still don't work the way I want - tab doesn't jump to next
-" placeholder.
+source $HOME/.vim/snippets/support_functions.vim 
 imap <expr><TAB> neocomplcache#sources#snippets_complete#expandable() ? "\<Plug>(neocomplcache_snippets_jump)" : pumvisible() ? "\<C-n>" : "\<TAB>"
 let g:snippets_dir="~/.vim/snippets/"
 let g:snips_author = 'Magnus Bengtsson'
