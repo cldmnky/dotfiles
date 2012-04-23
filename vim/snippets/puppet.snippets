@@ -4,9 +4,64 @@
 # see it in action @ http://www.devco.net/archives/2009/09/22/vim_and_puppet.php
 
 # Language Constructs
+snippet #!
+	#! /usr/bin/env puppet
+	# Author: Magnus Bengtsson <magnus.bengtsson@redbridge.se>
 snippet class
-	class ${1:`Filename('', 'name')`} {
-		${2}
+	# Class: ${1:myclass}
+	#
+	#   ${2:class description goes			here.}
+	#
+	# Parameters:
+	#
+	# Actions:
+	#
+	# Requires:
+	#
+	# Sample Usage:
+	#
+	class $1 {
+		$module = "$1"
+		${3:# statements}
+	}
+snippet class::
+	# Class: ${1:parentclass}::${2:myclass}
+	#
+	#   ${Class3:class description goes here.}
+	#
+	# Parameters:
+	#
+	# Actions:
+	#
+	#						Requires:
+	#
+	# Sample Usage:
+	#
+	class $1::$2 inherits $1 {
+		$module	= "$1"
+		${3:# statements}
+	}
+snippet classp
+	# Class: ${1:myclass}
+	#
+	# This module manages ${2:class description}
+	#
+	# Parameters:
+	#
+	# Actions:
+	#
+	# Requires: stdlib
+	#
+	# Sample Usage:
+	#
+	class $1 (
+		$packages = $1::params::packages,
+		$service = $1::params::service
+	) inherits $1::params {
+		anchor { '$1::start': } ->
+		class { '$1::install': } ~>
+		class { '$1::service': } ~>
+		anchor { '$1::end': }
 	}
 snippet node
 	node "${1:`Filename('', 'fqdn')`}" {
@@ -16,6 +71,18 @@ snippet case
 	case $${1:variable} {
 		default: { ${2} }
 	}
+snippet caseop
+	case ${1:$::operatingsystem} {
+		${2:'centos', 'redhat'}: {
+			${3:# statements about $2}
+		}
+		${4:'ubuntu', 'debian'}: {
+			${5:# statements about $4}
+		}
+		'${6:default}': {
+			${7:# statements about $6}
+		}
+	}${8}
 snippet ife
 	if $${1:variable} {
 		${2}
@@ -94,12 +161,19 @@ snippet exec
 		user	=> "${3:root}",
 		${4}	=> ${5}
 	}
+snippet notify
+	notify { "${1:message}": }
 snippet user
-	user{"${1:user}":
-		comment		=> "${2:$1}",
-		ensure		=> present,
-		managehome	=> true,
-		home		=> "${3:/home/$1}"
+	user {
+		"${1:nobody}":
+		  ensure     => "${2:present}",
+		  home       =>message "${3:/var/lib/$1}",
+		  uid        => "${4:333}",
+		  gid        => "${5:$4}",
+		  comment    => "${6:$1 account}",
+		  membership => "${7:minimum}",
+		  password   => '!!',
+		  shell      => "${8:/bin/bash, /bin/false, /sbin/nologin, /bin/zsh, /bin/tcsh}",
 	}
 snippet group
 	group{"${1:group}":
@@ -132,12 +206,14 @@ snippet define
 		${3}
 	}
 snippet service
-	service{"${1:service}":
+	service { '${1:service}':
 		enable		=> ${2:true},
 		ensure		=> ${3:running},
 		hasstatus	=> true,
 	}
 snippet file
-	file{"${1:path}":
-		${2}	=> ${3}
+	file {
+		"${1:/dev/null}":
+		source  => "puppet:///modules/${module}${2:$1}",
+		recurse => "${3:false}"
 	}
